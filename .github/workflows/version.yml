@@ -19,7 +19,7 @@ jobs:
         with:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
           token: ${{ secrets.PAT_TOKEN }}
-          path: target-repo
+          path: docker-jenkins-stack
           
       - name: Update version number
         run: |
@@ -31,7 +31,7 @@ jobs:
           new_version = "${{ github.event.inputs.new_version }}"
           
           # Read the file from target repository
-          file_path = "docker-jenkins-stack/jenkins-master/Dockerfile"
+          file_path = "=jenkins-master/Dockerfile"
           with open(file_path, "r") as file:
               content = file.read()
           
