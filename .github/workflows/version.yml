@@ -20,28 +20,6 @@ jobs:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
           token: ${{ secrets.PAT_TOKEN }}
           path: docker-jenkins-stack
-          
-      - name: Add text to file
-        run: |
-          python -c '
-          import os
-          
-          # Get inputs
-          new_version = """${{ github.event.inputs.new_text }}"""
-          
-          file_path = "docker-jenkins-stack/jenkins-master/Dockerfile"
-          
-          # Read file to check if we need to add a newline
-          with open(file_path, "r") as file:
-              content = file.read()
-          
-          # Append version with newline handling
-          with open(file_path, "a") as file:
-              # Add newline if file doesnt end with one
-              if content and not content.endswith("\n"):
-                  file.write("\n")
-              file.write(f"test:{new_version}\n")
-          '
       
       - name: Update version number
         run: |
@@ -58,7 +36,11 @@ jobs:
               content = file.read()
           
           # Use regex to replace everything after the colon while keeping "old-text:"
-          new_content = re.sub(r"jenkins-master-docker:[\d.]+", f"jenkins-master-docker:{new_version}", content)
+          new_content = re.sub(
+              r"FROM airdata/jenkins-master-docker:(latest|\d+\.?\d*\.?\d*)",
+              f"FROM airdata/jenkins-master-docker:{new_version}",
+              content
+          )
           
           # Write back to file
           with open(file_path, "w") as file:
