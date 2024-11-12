@@ -20,7 +20,11 @@ jobs:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
           token: ${{ secrets.PAT_TOKEN }}
           path: docker-jenkins-stack
-          
+
+      - name: List
+        run: |
+          ls -la
+      
       - name: Update version number
         run: |
           python -c '
