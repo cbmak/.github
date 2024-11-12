@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           path: docker-jenkins-stack
       
       - name: Update version number
@@ -57,7 +57,7 @@ jobs:
         if: steps.check_changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           path: docker-jenkins-stack
           commit-message: "Update version to ${{ github.event.inputs.new_version }}"
           title: "Version Update: ${{ github.event.inputs.new_version }}"
