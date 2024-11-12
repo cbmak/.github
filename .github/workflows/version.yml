@@ -57,7 +57,7 @@ jobs:
         if: steps.check_changes.outputs.changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: docker-jenkins-stack
           commit-message: "Update version to ${{ github.event.inputs.new_version }}"
           title: "Version Update: ${{ github.event.inputs.new_version }}"
