@@ -23,7 +23,7 @@ jobs:
 
       - name: List
         run: |
-          ls -la docker-jenkins-stack
+          pwd && ls -la docker-jenkins-stack
       
       - name: Update version number
         run: |
@@ -49,7 +49,7 @@ jobs:
           
       - name: Check for changes
         id: check_changes
-        working-directory: target-repo
+        working-directory: docker-jenkins-stack
         run: |
           git diff --exit-code || echo "changes=true" >> $GITHUB_OUTPUT
           
@@ -58,7 +58,7 @@ jobs:
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.PAT_TOKEN }}
-          path: target-repo
+          path: docker-jenkins-stack
           commit-message: "Update version to ${{ github.event.inputs.new_version }}"
           title: "Version Update: ${{ github.event.inputs.new_version }}"
           body: |
