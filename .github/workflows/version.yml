@@ -1,10 +1,8 @@
+name: increment_version
 on:
-  workflow_dispatch:
-    inputs:
-      new_version:
-        description: 'New version number'
-        required: true
-        default: '1.3.5'
+  push:
+    branches:
+      - main
 
 jobs:
   update-version:
@@ -26,26 +24,46 @@ jobs:
           python -c '
           import os
           import re
-          
-          # Get new version from workflow input
-          new_version = "${{ github.event.inputs.new_version }}"
-          
-          # Read the file from target repository
+
           file_path = "docker-jenkins-stack/jenkins-master/Dockerfile"
+          
+          def increment_version(version):
+              # Split version into parts
+              parts = version.split(".")
+              
+              # Convert last part to integer and increment
+              if len(parts) > 0:
+                  parts[-1] = str(int(parts[-1]) + 1)
+              
+              # Join back together
+              return ".".join(parts)
+          
+          # Read the Dockerfile
           with open(file_path, "r") as file:
               content = file.read()
           
-          # Use regex to replace everything after the colon while keeping "old-text:"
-          new_content = re.sub(
-              r"FROM airdata/jenkins-master-docker:(latest|\d+\.?\d*\.?\d*)",
-              f"FROM airdata/jenkins-master-docker:{new_version}",
-              content
-          )
+          # Find current version using regex
+          match = re.search(r"FROM airdata/jenkins-master-docker:(\d+\.?\d*\.?\d*)", content)
+          if match:
+              current_version = match.group(1)
+              new_version = increment_version(current_version)
+              
+              # Update the file
+              new_content = content.replace(
+                  f"FROM airdata/jenkins-master-docker:{current_version}",
+                  f"FROM airdata/jenkins-master-docker:{new_version}"
+              )
+              
+              # Write back to file
+              with open(file_path, "w") as file:
+                  file.write(new_content)
+                  
           
-          # Write back to file
-          with open(file_path, "w") as file:
-              file.write(new_content)
+          else:
+              print("Error: Could not find version in Dockerfile")
+              exit(1)
           '
+
           
       - name: Check for changes
         id: check_changes
