@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           path: docker-jenkins-stack
       
       - name: Update version number
