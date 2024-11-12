@@ -31,7 +31,7 @@ jobs:
           new_version = "${{ github.event.inputs.new_version }}"
           
           # Read the file from target repository
-          file_path = "=jenkins-master/Dockerfile"
+          file_path = "jenkins-master/Dockerfile"
           with open(file_path, "r") as file:
               content = file.read()
           
