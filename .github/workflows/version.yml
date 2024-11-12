@@ -20,10 +20,51 @@ jobs:
           repository: airdata/docker-jenkins-stack  # Replace with target repository
           token: ${{ secrets.PAT_TOKEN }}
           path: docker-jenkins-stack
-
-      - name: List
+          
+      - name: Add text to file
         run: |
-          pwd && ls -la docker-jenkins-stack
+          python -c '
+          import os
+          
+          # Get inputs
+          new_version = """${{ github.event.inputs.new_text }}"""
+          
+          file_path = "docker-jenkins-stack/jenkins-master/Dockerfile"
+          
+          # Read existing content
+          with open(file_path, "r") as file:
+              content = file.read()
+              lines = content.splitlines()
+          
+          if add_mode == "append":
+              # Add newline if file doesnt end with one
+              if content and not content.endswith("\n"):
+                  new_text = "\n" + new_text
+              
+              # Append text
+              with open(file_path, "a") as file:
+                  file.write(new_text + "\n")
+                  
+          else:  # insert mode
+              new_lines = []
+              found = False
+              
+              # Insert after specific line
+              for line in lines:
+                  new_lines.append(line)
+                  if insert_after in line:
+                      new_lines.append(new_text)
+                      found = True
+              
+              # If line not found, append at end
+              if not found:
+                  new_lines.append(new_text)
+              
+              # Write back all content
+              with open(file_path, "w") as file:
+                  file.write("\n".join(new_lines) + "\n")
+          '
+
       
       - name: Update version number
         run: |
